@@ -14,5 +14,5 @@ module.exports = {
   globals: {
     HAS_PASSWORD: true
   },
-  ignorePatterns: ['pages/api/*']
+  ignorePatterns: ['pages/*', 'pages/api/*']
 };
