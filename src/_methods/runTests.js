@@ -12,7 +12,7 @@ async function runTests(state = window.state) {
   let passed = true;
   const results = [];
   await Promise.all(state.constraints.map(async(constraint, index) => {
-    const authorized = await axios.get('/.netlify/functions/authorize', {
+    const authorized = await axios.get('/api/authorize', {
       params: {
         sessionId: state.sessionId,
         userId: constraint.userId,

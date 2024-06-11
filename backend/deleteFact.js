@@ -1,8 +1,11 @@
 'use strict';
 
 const Archetype = require('archetype');
+const Log = require('../db/log'); 
+const Player = require('../db/player');
 const assert = require('assert');
-const oso = require('../oso');
+const connect = require('../db/connect');
+const { inspect } = require('util');
 
 const DeleteFactParams = new Archetype({
   sessionId: {
@@ -24,38 +27,86 @@ const DeleteFactParams = new Archetype({
   },
   resourceType: {
     $type: 'string',
-    $required: true
+    $required: (v, type, doc) => assert.ok(v != null || doc.role !== 'superadmin')
   },
   resourceId: {
     $type: 'string',
-    $required: true
+    $required: (v, type, doc) => assert.ok(v != null || doc.role !== 'superadmin')
   },
   attribute: {
     $type: 'string',
     $validate: (v, type, doc) => assert.ok(v != null || doc.factType !== 'attribute')
   },
   attributeValue: {
-    $type: 'boolean',
+    $type: 'string',
     $validate: (v, type, doc) => assert.ok(v != null || doc.factType !== 'attribute')
+  },
+  actorType: {
+    $type: 'string'
   }
 }).compile('DeleteFactParams');
 
-module.exports = async function deleteFact(params) {
+module.exports = deleteFact;
+
+async function deleteFact(params) {
   params = new DeleteFactParams(params);
-  if (params.factType === 'role') {
-    const resourceId = params.resourceType === 'Repository' ? `${params.sessionId}_${params.resourceId}` : params.resourceId;
-    await oso.delete(
-      'has_role',
-      { type: 'User', id: `${params.sessionId}_${params.userId}` },
-      params.role,
-      { type: params.resourceType, id: resourceId }
-    );
-  } else {
-    await oso.delete(
-      params.attribute,
-      { type: 'Repository', id: `${params.sessionId}_${params.resourceId}` },
-      { type: 'Boolean', id: !!params.attributeValue + '' }
-    );
+
+  await connect();
+
+  await Log.info(`deleteFact ${inspect(params)}`, {
+    ...params,
+    function: 'deleteFact'
+  });
+
+  try {
+    const { sessionId } = params;
+    const player = await Player.findOne({ sessionId }).orFail();
+
+    if (params.factType === 'role') {
+      if (params.role === 'superadmin') {
+        player.contextFacts = player.contextFacts.filter(fact => {
+          return fact[0] !== 'has_role' ||
+            fact[1].type !== 'User' ||
+            fact[1].id !== params.userId ||
+            fact[2] !== params.role;
+        });
+      } else {
+        player.contextFacts = player.contextFacts.filter(fact => {
+          return fact[0] !== 'has_role' ||
+            fact[1].type !== (params.actorType ?? 'User') ||
+            fact[1].id !== params.userId ||
+            fact[2] !== params.role ||
+            fact[3]?.type !== params.resourceType ||
+            fact[3]?.id !== params.resourceId;
+        });
+      }
+      
+    } else if (params.attribute === 'has_default_role') {
+      player.contextFacts = player.contextFacts.filter(fact => {
+        return fact[0] !== 'has_default_role' ||
+          fact[1].type !== params.resourceType ||
+          fact[1].id !== params.resourceId ||
+          fact[2] !== params.attributeValue;
+      });
+    } else {
+      player.contextFacts = player.contextFacts.filter(fact => {
+        return fact[0] !== params.attribute ||
+          fact[1].type !== params.resourceType ||
+          fact[1].id !== params.resourceId ||
+          fact[2].id !== params.attributeValue;
+      });
+    }
+    await player.save();
+    return { ok: true, player };
+  } catch (err) {
+    await Log.error(`deleteFact: ${err.message}`, {
+      ...params,
+      function: 'deleteFact',
+      message: err.message,
+      stack: err.stack,
+      err: inspect(err)
+    });
+
+    throw err;
   }
-  return { ok: true };
-};
+}

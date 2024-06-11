@@ -72,7 +72,7 @@ module.exports = app => app.component('add-role-fact', {
       }
 
       const factType = 'role';
-      await axios.put('/.netlify/functions/tell', {
+      await axios.put('/api/tell', {
         sessionId: this.state.sessionId,
         factType,
         actorType: this.actorType,

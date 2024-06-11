@@ -22,10 +22,4 @@ module.exports = async function setLevel(level, retainContextFacts, state = wind
   state.results = [];
   state.showNextLevelButton = false;
   state.facts = [];
-
-  if (!retainContextFacts) {
-    await axios.post('/.netlify/functions/clearContextFacts', {
-      sessionId: state.sessionId
-    });
-  }
 };

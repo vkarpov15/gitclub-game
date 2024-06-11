@@ -1,6 +1,10 @@
 'use strict';
 
 const Archetype = require('archetype');
+const Log = require('../db/log'); 
+const Player = require('../db/player');
+const connect = require('../db/connect');
+const { inspect } = require('util');
 const oso = require('../oso');
 
 const AuthorizeParams = new Archetype({
@@ -28,11 +32,36 @@ const AuthorizeParams = new Archetype({
 
 module.exports = async function authorize(params) {
   params = new AuthorizeParams(params);
-  const authorized = await oso.authorize(
-    { type: 'User', id: `${params.sessionId}_${params.userId}` },
-    params.action,
-    { type: params.resourceType, id: params.resourceId }
-  );
+  const { sessionId } = params;
 
-  return { authorized };
+  await connect();
+
+  await Log.info(`authorize ${inspect(params)}`, {
+    ...params,
+    function: 'authorize'
+  });
+
+  try {
+    const player = await Player.findOne({ sessionId }).orFail();
+
+    console.log('Authorize', params, player.contextFacts);
+
+    const authorized = await oso.authorize(
+      { type: 'User', id: params.userId },
+      params.action,
+      { type: params.resourceType, id: params.resourceId },
+      player.contextFacts
+    );
+    return { authorized };
+  } catch (err) {
+    await Log.error(`authorize: ${err.message}`, {
+      ...params,
+      function: 'authorize',
+      message: err.message,
+      stack: err.stack,
+      err: inspect(err)
+    });
+
+    throw err;
+  }
 };
