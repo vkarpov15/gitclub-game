@@ -1,8 +1,8 @@
 'use strict';
 
-const Archetype = require('archetype');
-const assert = require('assert');
-const oso = require('../../oso');
+import Archetype from 'archetype';
+import assert from 'assert';
+import oso from '../../oso';
 
 const DeleteFactParams = new Archetype({
   sessionId: {
@@ -40,7 +40,7 @@ const DeleteFactParams = new Archetype({
   }
 }).compile('DeleteFactParams');
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   try {
     const params = new DeleteFactParams(req.body);
     if (params.factType === 'role') {

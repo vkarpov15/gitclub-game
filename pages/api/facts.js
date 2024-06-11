@@ -1,7 +1,7 @@
 'use strict';
 
-const Archetype = require('archetype');
-const oso = require('../../oso');
+import Archetype from 'archetype';
+import oso from '../../oso';
 
 const FactsParams = new Archetype({
   sessionId: {
@@ -14,7 +14,7 @@ const FactsParams = new Archetype({
   }
 }).compile('FactsParams');
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   try {
     const params = new FactsParams(req.body);
     const facts = [];

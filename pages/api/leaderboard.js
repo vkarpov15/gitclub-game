@@ -1,9 +1,10 @@
 'use strict';
 
-const Player = require('../../db/player');
-const connect = require('../../db/connect');
+import Archetype from 'archetype';
+import Player from '../../db/player';
+import connect from '../../db/connect';
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   try {
     await connect();
   

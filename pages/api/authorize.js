@@ -1,7 +1,7 @@
 'use strict';
 
-const Archetype = require('archetype');
-const oso = require('../../oso');
+import Archetype from 'archetype';
+import oso from '../../oso';
 
 const AuthorizeParams = new Archetype({
   sessionId: {
@@ -26,8 +26,7 @@ const AuthorizeParams = new Archetype({
   }
 }).compile('AuthorizeParams');
 
-
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   try {
     const params = new AuthorizeParams(req.query);
     const authorized = await oso.authorize(

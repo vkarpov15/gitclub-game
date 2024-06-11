@@ -1,9 +1,9 @@
 'use strict';
 
-const Archetype = require('archetype');
-const Player = require('../../db/player');
-const connect = require('../../db/connect');
-const oso = require('../../oso');
+import Archetype from 'archetype';
+import Player from '../../db/player';
+import connect from '../../db/connect';
+import oso from '../../oso';
 
 const StartGameParams = new Archetype({
   sessionId: {
@@ -20,7 +20,7 @@ const StartGameParams = new Archetype({
   }
 }).compile('StartGameParams');
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   try {
     const { sessionId, name, email } = new StartGameParams(req.body);
 

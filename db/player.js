@@ -2,7 +2,7 @@
 
 const mongoose = require('mongoose');
 
-module.exports = mongoose.model('Player', mongoose.Schema({
+const Player = mongoose.models.Player ?? mongoose.model('Player', mongoose.Schema({
   sessionId: {
     type: String,
     required: true
@@ -35,3 +35,5 @@ module.exports = mongoose.model('Player', mongoose.Schema({
   },
   contextFacts: [{ type: 'Mixed' }] 
 }));
+
+module.exports = Player;

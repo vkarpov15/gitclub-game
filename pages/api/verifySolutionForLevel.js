@@ -1,11 +1,11 @@
 'use strict';
 
-const Archetype = require('archetype');
-const Player = require('../../db/player');
-const assert = require('assert');
-const connect = require('../../db/connect');
-const levels = require('../../levels');
-const oso = require('../../oso');
+import Archetype from 'archetype';
+import Player from '../../db/player';
+import assert from 'assert';
+import connect from '../../db/connect';
+import levels from '../../levels';
+import oso from '../../oso';
 
 const VerifySolutionForLevelParams = new Archetype({
   sessionId: {
@@ -23,7 +23,7 @@ const constraintsByLevel = require('../../levels').map(level => level.constraint
 
 const parByLevel = require('../../levels').map(level => level.par);
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   try {
     const { sessionId, level } = new VerifySolutionForLevelParams(req.body);
 

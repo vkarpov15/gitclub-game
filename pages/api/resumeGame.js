@@ -1,8 +1,8 @@
 'use strict';
 
-const Archetype = require('archetype');
-const Player = require('../../db/player');
-const connect = require('../../db/connect');
+import Archetype from 'archetype';
+import Player from '../../db/player';
+import connect from '../../db/connect';
 
 const ResumeGameParams = new Archetype({
   sessionId: {
@@ -11,7 +11,7 @@ const ResumeGameParams = new Archetype({
   }
 }).compile('ResumeGameParams');
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   try {
     const { sessionId } = new ResumeGameParams(req.query);
 
