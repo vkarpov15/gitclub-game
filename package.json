@@ -2,14 +2,12 @@
   "name": "gitclub-game",
   "version": "0.0.0",
   "scripts": {
-    "build": "node ./build",
     "lint": "eslint .",
     "tailwind": "tailwindcss -o ./public/style.css",
     "tailwind:watch": "tailwindcss -o ./public/style.css --watch",
-    "next:dev": "next dev",
-    "next:build": "next build",
-    "next:start": "next start",
-    "next:lint": "next lint"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
   },
   "dependencies": {
     "archetype": "0.13.0",
