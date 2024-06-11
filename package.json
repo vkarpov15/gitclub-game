@@ -28,8 +28,6 @@
   },
   "devDependencies": {
     "@masteringjs/eslint-config": "0.0.1",
-    "@mongoosejs/studio": "0.0.22",
-    "@types/react": "18.3.3",
-    "typescript": "5.4.5"
+    "@mongoosejs/studio": "0.0.22"
   }
 }
