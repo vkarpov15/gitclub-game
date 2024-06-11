@@ -206,7 +206,7 @@ module.exports = app => app.component('level', {
       return `User ${fact.userId} has role ${fact.role} on ${fact.resourceType} ${fact.resourceId}`;
     },
     async deleteFact(fact) {
-      await axios.put('/api/deleteFact', {
+      await axios.put('/api/delete-fact', {
         sessionId: this.state.sessionId,
         ...fact
       }).then(res => res.data);
@@ -220,7 +220,7 @@ module.exports = app => app.component('level', {
       return this.state.results[index].pass ? '/images/check-green.svg' : '/images/error-red.svg';
     },
     async verifySolutionForLevel() {
-      const { player } = await axios.post('/api/verifySolutionForLevel', {
+      const { player } = await axios.post('/api/verify-solution-for-level', {
         sessionId: this.state.sessionId,
         level: this.state.level
       }).then(res => res.data);

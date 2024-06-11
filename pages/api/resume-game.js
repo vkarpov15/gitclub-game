@@ -1,27 +1,12 @@
 'use strict';
 
-import Archetype from 'archetype';
-import Player from '../../db/player';
-import connect from '../../db/connect';
-
-const ResumeGameParams = new Archetype({
-  sessionId: {
-    $type: 'string',
-    $required: true
-  }
-}).compile('ResumeGameParams');
+import resumeGame from '../../backend/resumeGame';
 
 export default async function handler(req, res) {
   try {
-    const { sessionId } = new ResumeGameParams(req.query);
+    const result = await resumeGame(req.query);
 
-    await connect();
-    
-    const player = await Player.findOne({
-      sessionId
-    });
-
-    return res.status(200).json({ player });
+    return res.status(200).json(result);
   } catch (error) {
     console.error(error.stack);
     res.status(500).json({ message: error.message });

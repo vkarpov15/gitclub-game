@@ -1,41 +1,11 @@
 'use strict';
 
-import Archetype from 'archetype';
-import oso from '../../oso';
-
-const AuthorizeParams = new Archetype({
-  sessionId: {
-    $type: 'string',
-    $required: true
-  },
-  userId: {
-    $type: 'string',
-    $required: true
-  },
-  action: {
-    $type: 'string',
-    $required: true
-  },
-  resourceType: {
-    $type: 'string',
-    $required: true
-  },
-  resourceId: {
-    $type: 'string',
-    $required: true
-  }
-}).compile('AuthorizeParams');
+import authorize from '../../backend/authorize';
 
 export default async function handler(req, res) {
   try {
-    const params = new AuthorizeParams(req.query);
-    const authorized = await oso.authorize(
-      { type: 'User', id: `${params.sessionId}_${params.userId}` },
-      params.action,
-      { type: params.resourceType, id: params.resourceId }
-    );
-
-    return res.status(200).json({ authorized });
+    const result = await authorize(req.query);
+    return res.status(200).json(result);
   } catch (error) {
     console.error(error.stack);
     res.status(500).json({ message: error.message });

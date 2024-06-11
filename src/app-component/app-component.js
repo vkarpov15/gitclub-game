@@ -71,7 +71,7 @@ module.exports = app => app.component('app-component', {
       this.state.showNextLevelButton = passed;
     },
     async verifySolutionForLevel() {
-      const { player } = await axios.post('/api/verifySolutionForLevel', {
+      const { player } = await axios.post('/api/verify-solution-for-level', {
         sessionId: this.state.sessionId,
         level: this.state.level
       }).then(res => res.data);
