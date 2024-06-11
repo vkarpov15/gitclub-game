@@ -59,4 +59,4 @@ module.exports = async function handler(req, res) {
     console.error(error.stack);
     res.status(500).json({ message: error.message });
   }
-}
+};

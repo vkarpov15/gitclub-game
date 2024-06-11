@@ -1,3 +1,5 @@
+'use strict';
+
 require('./build')();
 
 module.exports = {
@@ -5,8 +7,8 @@ module.exports = {
     return [
       {
         source: '/',
-        destination: '/index.html',
-      },
-    ]
+        destination: '/index.html'
+      }
+    ];
   }
 };
