@@ -1,6 +1,6 @@
 'use strict';
 
-import clearContextFacts from '../../backend/clear-context-facts';
+import clearContextFacts from '../../backend/clearContextFacts';
 
 export default async function handler(req, res) {
   try {
