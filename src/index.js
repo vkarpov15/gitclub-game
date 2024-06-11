@@ -8,9 +8,6 @@ const components = require('./components');
 const levels = require('../levels');
 const vanillatoasts = require('vanillatoasts');
 
-window.setLevel = require('./_methods/setLevel');
-window.runTests = require('./_methods/runTests');
-
 const app = Vue.createApp({
   template: `
   <div>
@@ -22,20 +19,18 @@ const app = Vue.createApp({
   setup() {
     const state = Vue.reactive({
       organizations: ['osohq', 'acme'],
-      repositories: ['osohq/sample-apps', 'osohq/configs', 'osohq/nodejs-client', 'acme/website'],
+      repositories: ['osohq/sample-apps', 'osohq/configs', 'osohq/nodejs-client'],
       constraints: levels[0].constraints,
       results: [],
       facts: [],
       sessionId,
       level: 0,
-      currentLevel: null,
       par: 0,
       startTime: null,
       errors: {},
       showNextLevelButton: false,
       name: '',
-      email: '',
-      player: null
+      email: ''
     });
 
     Vue.provide('state', state);
@@ -45,9 +40,8 @@ const app = Vue.createApp({
     return state;
   },
   async errorCaptured(err) {
-    const title = err?.response?.data?.message ?? err.message;
     vanillatoasts.create({
-      title,
+      title: err.message,
       icon: '/images/failure.jpg',
       timeout: 5000,
       positionClass: 'bottomRight'

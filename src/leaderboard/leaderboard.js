@@ -31,7 +31,7 @@ module.exports = app => app.component('leaderboard', {
     }
   },
   async mounted() {
-    const { players } = await axios.get('/.netlify/functions/leaderboard').then(res => res.data);
+    const { players } = await axios.get('/api/leaderboard').then(res => res.data);
     this.players = players;
     this.status = 'loaded';
   }
