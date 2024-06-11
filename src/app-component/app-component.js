@@ -122,7 +122,7 @@ module.exports = app => app.component('app-component', {
       this.currentTime = new Date();
     }, 500);
 
-    const { player } = await axios.get('/api/resumeGame', {
+    const { player } = await axios.get('/api/resume-game', {
       params: {
         sessionId: this.state.sessionId
       }
