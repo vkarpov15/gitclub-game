@@ -19,9 +19,8 @@ const VerifySolutionForLevelParams = new Archetype({
   }
 }).compile('VerifySolutionForLevelParams');
 
-const constraintsByLevel = require('../../levels').map(level => level.constraints);
-
-const parByLevel = require('../../levels').map(level => level.par);
+const constraintsByLevel = levels.map(level => level.constraints);
+const parByLevel = levels.map(level => level.par);
 
 module.exports = async function handler(params) {
   const { sessionId, level } = new VerifySolutionForLevelParams(params);
