@@ -3,7 +3,7 @@
 const Player = require('../../db/player');
 const connect = require('../../db/connect');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   try {
     await connect();
   

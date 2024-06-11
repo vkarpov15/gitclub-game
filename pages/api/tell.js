@@ -40,7 +40,7 @@ const TellParams = new Archetype({
   }
 }).compile('TellParams');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   try {
     const params = new TellParams(req.body);
     assert.ok(

@@ -14,7 +14,7 @@ const FactsParams = new Archetype({
   }
 }).compile('FactsParams');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   try {
     const params = new FactsParams(req.body);
     const facts = [];

@@ -20,7 +20,7 @@ const StartGameParams = new Archetype({
   }
 }).compile('StartGameParams');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   try {
     const { sessionId, name, email } = new StartGameParams(req.body);
 

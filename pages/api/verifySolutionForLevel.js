@@ -23,7 +23,7 @@ const constraintsByLevel = require('../../levels').map(level => level.constraint
 
 const parByLevel = require('../../levels').map(level => level.par);
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   try {
     const { sessionId, level } = new VerifySolutionForLevelParams(req.body);
 

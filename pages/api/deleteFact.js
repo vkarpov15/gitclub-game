@@ -40,7 +40,7 @@ const DeleteFactParams = new Archetype({
   }
 }).compile('DeleteFactParams');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   try {
     const params = new DeleteFactParams(req.body);
     if (params.factType === 'role') {

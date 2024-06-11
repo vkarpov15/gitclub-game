@@ -27,7 +27,7 @@ const AuthorizeParams = new Archetype({
 }).compile('AuthorizeParams');
 
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   try {
     const params = new AuthorizeParams(req.query);
     const authorized = await oso.authorize(
