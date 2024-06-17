@@ -2,7 +2,6 @@
 
 const Archetype = require('archetype');
 const assert = require('assert');
-const oso = require('../oso');
 
 const TellParams = new Archetype({
   sessionId: {
@@ -40,37 +39,64 @@ const TellParams = new Archetype({
   }
 }).compile('TellParams');
 
-module.exports = async function handler(params) {
-  const validatedParams = new TellParams(params);
-  assert.ok(
-    validatedParams.attribute == null || ['is_public', 'is_protected'].includes(validatedParams.attribute),
-    'Invalid attribute'
-  );
+module.exports = async function tell(params) {
+  params = new TellParams(params);
+  await connect();
 
-  if (validatedParams.factType === 'role') {
-    const resourceId = validatedParams.resourceType === 'Repository' ? `${validatedParams.sessionId}_${validatedParams.resourceId}` : validatedParams.resourceId;
+  await Log.info(`Tell ${inspect(params)}`, { ...params, function: 'tell' });
 
-    if (validatedParams.role === 'superadmin') {
-      await oso.tell(
-        'has_role',
-        { type: 'User', id: `${validatedParams.sessionId}_${validatedParams.userId}` },
-        validatedParams.role
-      );
+  try {
+    const { sessionId } = params;
+
+    const player = await Player.findOne({ sessionId }).orFail();
+
+    if (params.factType === 'role') {
+      if (params.role === 'superadmin') {
+        player.contextFacts.push([
+          'has_role',
+          { type: params.actorType, id: params.userId },
+          params.role
+        ]);
+      } else {
+        player.contextFacts.push([
+          'has_role',
+          { type: params.actorType, id: params.userId },
+          params.role,
+          { type: params.resourceType, id: params.resourceId }
+        ]);
+      }
+    } else if (params.attribute === 'has_default_role') {
+      player.contextFacts.push([
+        params.attribute,
+        { type: params.resourceType, id: params.resourceId },
+        params.attributeValue
+      ]);
+    } else if (params.attribute === 'has_group') {
+      player.contextFacts.push([
+        params.attribute,
+        { type: params.resourceType, id: params.resourceId },
+        { type: 'Group', id: params.attributeValue }
+      ]);
     } else {
-      await oso.tell(
-        'has_role',
-        { type: 'User', id: `${validatedParams.sessionId}_${validatedParams.userId}` },
-        validatedParams.role,
-        { type: validatedParams.resourceType, id: resourceId }
-      );
+      player.contextFacts.push([
+        params.attribute,
+        { type: params.resourceType, id: params.resourceId },
+        { type: 'Boolean', id: params.attributeValue }
+      ]);
     }
-  } else {
-    await oso.tell(
-      validatedParams.attribute,
-      { type: 'Repository', id: `${validatedParams.sessionId}_${validatedParams.resourceId}` },
-      { type: 'Boolean', id: !!validatedParams.attributeValue + '' }
-    );
+
+    await player.save();
+
+    return { ok: true };
+  } catch (err) {
+    await Log.error(`tell: ${err.message}`, {
+      ...params,
+      function: 'tell',
+      message: err.message,
+      stack: err.stack,
+      err: inspect(err)
+    });
+
+    throw err;
   }
-  
-  return { ok: true };
 };
