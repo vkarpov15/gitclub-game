@@ -17,6 +17,11 @@ const TellParams = new Archetype({
     $required: true,
     $enum: ['role', 'attribute']
   },
+  actorType: {
+    $type: 'string',
+    $required: true,
+    $default: 'User'
+  },
   userId: {
     $type: 'string',
     $validate: (v, type, doc) => assert.ok(v != null || doc.factType !== 'role')
@@ -38,7 +43,7 @@ const TellParams = new Archetype({
     $validate: (v, type, doc) => assert.ok(v != null || doc.factType !== 'attribute')
   },
   attributeValue: {
-    $type: 'boolean',
+    $type: 'string',
     $validate: (v, type, doc) => assert.ok(v != null || doc.factType !== 'attribute')
   }
 }).compile('TellParams');
